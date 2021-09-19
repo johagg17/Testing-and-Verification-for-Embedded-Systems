@@ -18,7 +18,7 @@ public class CarParkingTesting {
 	}
 
 	@Test
-	public void testCarParkingWhereIsAfterMoving() {
+	public void testCarParkingWhereIsAfterMoving() throws Exception {
 		CarParking car = new CarParking(); // Create new car object
 		int[] new_pos = car.MoveForward();
 		int [] position = car.WhereIs();
@@ -29,33 +29,61 @@ public class CarParkingTesting {
 	}
 
 	@Test
-	public void testCarParkingIsEmpty() {
+	public void testCarParkingIsEmpty() { // sensor1 and sensor2 both gives true
 		CarParking car = new CarParking();
-		int sensorval = 80;
-		boolean free_slot = car.isEmpty(sensorval);
+		boolean free_slot = car.isEmpty(); // both sensors indicates on free slot
 		assertTrue(free_slot);
 
 	}
 	@Test
-	public void testCarParkingIsNotEmpty() {
+	public void testCarParkingIsNotEmptyTest1() { // sensor1 = false, sensor2 = true
 		CarParking car = new CarParking();
-		int sensorval = 200;
-		boolean free_slot = car.isEmpty(sensorval);
+		car.sensor1 = 200;
+		boolean free_slot = car.isEmpty(); // the first sensors tells that there is not empty slot in current y-pos
 		assertFalse(free_slot);
 	}
-
+	@Test 
+	public void testCarParkingIsNotEmptyTest2() { // sensor1 = true, sensor2 = false
+		CarParking car = new CarParking();
+		car.sensor2 = 200;
+		boolean free_slot = car.isEmpty(); 
+		assertFalse(free_slot);
+		
+	}
+	@Test 
+	public void testCarParkingIsNotEmptyTest3() { // sensor1 = false, sensor2 = false
+		CarParking car = new CarParking();
+		car.sensor1 = 200;
+		car.sensor2 = 200;
+		boolean free_slot = car.isEmpty(); 
+		assertFalse(free_slot);	
+	}
+	
 	@Test
-	public void testCarParkingMoveForward() {
+	public void testCarParkingMoveForward() throws Exception {
 		CarParking car = new CarParking();
 		int[] pos = car.WhereIs();
-		int [] result = car.MoveForward();
+		int [] result = car.MoveForward(); 
 		assertTrue(pos[0] == result[0]);
 		assertTrue(pos[1] == result[1] - 1);
-		assertTrue(result[2] == 0); // Since we have only moved forward ones this should return 0.
+		assertTrue(result[2] == 1); // Since we have only moved forward ones this should return 1
 
 	}
+	
 	@Test
-	public void testCarParkingMoveForwardFiveTimes() { // Testing to moveForward 5 times,
+	public void testCarParkingMoveForwardAndDetectOccupiedSlot() throws Exception {
+		CarParking car = new CarParking();
+		car.MoveForward(); car.MoveForward(); car.MoveForward(); // 3 empty slots
+		car.sensor1 = 200; // set sensor value to no empty slot
+		car.MoveForward(); // this.freespace = 0
+		car.sensor1 = 80;
+		int [] pos = car.MoveBackward(); // this.freespace = 3
+		assertTrue(pos[2] == 3);
+		
+		
+	}
+	@Test
+	public void testCarParkingMoveForwardFiveTimes() throws Exception { // Testing to moveForward 5 times,
 		CarParking car = new CarParking();
 		int[] pos = car.WhereIs();
 		int [] result = new int[3];
@@ -65,59 +93,50 @@ public class CarParkingTesting {
 		assertTrue(result[2] == pos[2] + 5);
 
 	}
-	@Test
-	public void testCarParkingMoveForwardOutOfBounds() {
+	@Test(expected = Exception.class)
+	public void testCarParkingMoveForwardOutOfBounds() throws Exception{
 		CarParking car = new CarParking();
-		for (int i=0; i<500; i++) {car.MoveForward();}
-		//System.out.println("Loop is done");
-		int[] newpos = car.MoveForward();
-		// System.out.println(newpos[1]);
-		assertTrue(newpos[1] == 500);
-
+		for (int i=0; i<=500; i++) {car.MoveForward();}
 	}
+	
 	@Test
 	public void testCatParkingUnParkWhenNotParked() {
 		CarParking car = new CarParking();
-		int [] prev_pos = car.WhereIs();
-		car.UnPark();
-		int [] new_pos = car.WhereIs();
-		assertTrue(prev_pos[0] == new_pos[0]); // test x
-		assertTrue(prev_pos[1] == new_pos[1]); // test y
-
-
+		int y = car.WhereIs()[1];
+		boolean ableToUnPark = car.UnPark();
+		assertFalse(ableToUnPark); 
+		assertTrue(y == car.WhereIs()[1]);
+		
 	}
 
 	@Test
-	public void testCarParkingUnPark() {
+	public void testCarParkingUnPark() throws Exception {
 		CarParking car = new CarParking();
 		car.MoveForward();
 		car.MoveForward();
 		car.MoveForward();
 		car.MoveForward();
 		car.MoveForward();
-		car.Park();
-		int [] previousPos = car.WhereIs();
-		car.UnPark();
-		int [] currentPos = car.WhereIs();
+		int y = car.WhereIs()[1];
+		boolean parked = car.Park();
+		boolean unparked = car.UnPark();
 
-		assertTrue(currentPos[0] == previousPos[0] - 1);
-		assertTrue(currentPos[1] == previousPos[1] + 1);
+		assertTrue(parked);
+		assertTrue(unparked);
+		assertTrue(y + 1 == car.WhereIs()[1]); 
 
 	}
 
 	@Test
 	public void testCarParkingTryParkWhenThereIsNoSpaceAvailable () {
 		CarParking car = new CarParking();
-		int[] prev_pos = car.WhereIs();
-		car.Park();
-		int[] new_pos = car.WhereIs();
-		assertTrue(prev_pos[0] == new_pos[0]); // x
-		assertTrue(prev_pos[1] == new_pos[1]); // y
-		assertTrue(prev_pos[2] == new_pos[2]); // freespace
+		boolean p = car.Park();
+		assertFalse(p);
+		
 
 	}
 	@Test
-	public void testCarParkingParkWhenAlreadyParked() {
+	public void testCarParkingParkWhenAlreadyParked() throws Exception {
 		CarParking car = new CarParking();
 		car.MoveForward();
 		car.MoveForward();
@@ -131,7 +150,7 @@ public class CarParkingTesting {
 
 	}
 	@Test
-	public void testCarParkingPark() {
+	public void testCarParkingPark() throws Exception {
 		CarParking car = new CarParking();
 		car.MoveForward();
 		car.MoveForward();
@@ -143,19 +162,15 @@ public class CarParkingTesting {
 		assertTrue(parking);
 	}
 
-	@Test
-	public void testCarParkingMoveBackWardAtStart() {
+	@Test(expected = Exception.class)
+	public void testCarParkingMoveBackWardAtStart() throws Exception {
 		CarParking car = new CarParking();
 		int [] prev_pos = car.WhereIs();
-		int[] pos = car.MoveBackward();
-		assertTrue(pos[0] == prev_pos[0]); // x
-		assertTrue(pos[1] == prev_pos[1]); // y
-		assertTrue(pos[2] == prev_pos[2]); // freespace
-
+		car.MoveBackward();
 	}
 
 	@Test //not looking if the amount of free spaces is correct only that we actually backed up 1 space
-	public void testCarParkingMoveBackward() {
+	public void testCarParkingMoveBackward() throws Exception {
 		CarParking car = new CarParking();
 		car.MoveForward();
 		car.MoveForward();
@@ -166,8 +181,8 @@ public class CarParkingTesting {
 
 	}
 
-	@Test
-	public void testCarParkingMoveBackwardWhenParked() {
+	@Test(expected = Exception.class)
+	public void testCarParkingMoveBackwardWhenParked() throws Exception {
 		CarParking car = new CarParking();
 		car.MoveForward();
 		car.MoveForward();
@@ -176,11 +191,7 @@ public class CarParkingTesting {
 		car.MoveForward();
 
 		assertTrue(car.Park());
-		int [] prevPos = car.WhereIs();
-		int [] newPos = car.MoveBackward();
-
-		assertTrue(prevPos[0] == newPos[0]);
-		assertTrue(prevPos[1] == newPos[1]);
+		car.MoveBackward();
 	}
 
 
