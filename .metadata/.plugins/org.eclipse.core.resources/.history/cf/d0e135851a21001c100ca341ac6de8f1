@@ -1,0 +1,24 @@
+package testing;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.Before;
+import org.junit.jupiter.api.Test;
+
+import productioncode.*;
+
+class CarParkingControllerTest {
+	CarParking car;
+	CarParkingView view;
+	@Before
+	public void SetUp() {
+
+		view = new CarParkingView();
+		car = new CarParking(view);
+	}
+	@Test
+	public void PressUpArrowAndConfirmNewYposition() {
+		CarParkingController controller = new CarParkingController(car, view);
+	}
+
+}

@@ -1,0 +1,81 @@
+package productioncode;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class CarParkingView extends JFrame {
+	
+	private CarParkingController controller;
+	
+	public CarParkingView() {
+		//GridLayout layout = new GridLayout(10, 2);
+		//this.setLayout(layout);
+		this.setSize(200, 300);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		int[] test = new int[3];
+		this.map(test);
+		this.pack();
+		this.setVisible(true);
+	}
+	public void map(int[] currentsituation) {
+		this.getContentPane().removeAll();
+		Color color = new Color(0, 0, 0);
+		int y = currentsituation[1];
+		//JFrame window = new JFrame("");
+		GridLayout layout = new GridLayout(10, 2);
+		this.setLayout(layout);
+		this.setSize(200, 300);
+		for (int row = 0; row < 10; row++){
+		    for (int col = 0; col < 2; col++){
+		    	if (col == 0) {
+		    		color = new Color(220, 220, 220);//street? grayish
+		    	}else {
+		    		color = new Color(50, 205, 50);//grass? greenish
+		    	}
+		        JPanel panel = new JPanel();
+		        JLabel b = new JLabel ("(" + (y-row)+","+col+")");
+		        this.add(b).setLocation(row, col);
+		        panel.add(b);
+		        panel.setPreferredSize(new Dimension(30, 50));
+		        panel.setBackground(color);
+		        this.add(panel);
+		    }
+		}
+
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
+		this.setVisible(true);
+
+	}
+/*	public void paint(Graphics g)
+	{
+	 super.paint(g);
+	 int x = 180;
+	 int y = 280;
+	 int width = 40;
+	 int height = 20;
+		for(int i = 0; i < 10; i++) {
+
+			//draw square outline
+			g.drawRect(x,y,width,height);
+
+			//set color to RED
+			//So after this, if you draw anything, all of it's result will be RED
+	 	g.setColor(Color.RED);
+
+	 	//fill square with RED
+	 	g.fillRect(x,y,width,height);
+	 	y = y - height - 2;
+		}
+	}*/
+
+}

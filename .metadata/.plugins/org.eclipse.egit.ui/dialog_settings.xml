@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item key="GitSelectRepositoryPage.lastRepository" value="/Users/LinusLerjebo/git/Testing-and-Verification-for-Embedded-Systems/.git"/>
 	<list key="EGit.KnownHosts">
 		<item value="git.eclipse.org"/>
 		<item value="github.com"/>
