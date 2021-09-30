@@ -12,8 +12,9 @@ class CarParkingControllerTest {
 	CarParkingView view;
 	@Before
 	public void SetUp() {
-		car = new CarParking();
+		
 		view = new CarParkingView();
+		car = new CarParking(view);
 	}
 	@Test
 	public void PressUpArrowAndConfirmNewYposition() {

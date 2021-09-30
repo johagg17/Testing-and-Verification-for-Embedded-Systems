@@ -9,10 +9,15 @@ public class CarParking {
 	int[] slots = new int[501]; // The size is 501 since we do not query index 0 at the start.
 	public int sensor1 = 80; // ranges from 0 to 200
 	public int sensor2 = 80; // ranges from 0 to 200
+	
+	//Sensor sensors;
+	Actuators act;
 	CarParkingView view;
-
+	
+	
 	public CarParking(CarParkingView view) {
 		this.view = view;
+		act = new Actuators();
 	}
 
 	/**
