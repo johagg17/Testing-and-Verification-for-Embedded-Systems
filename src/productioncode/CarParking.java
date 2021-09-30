@@ -11,13 +11,16 @@ public class CarParking {
 	public int sensor2 = 80; // ranges from 0 to 200
 	
 	//Sensor sensors;
-	Actuators act;
+	MockCarSensor sens;
+	MockCarActuator act;
 	CarParkingView view;
 	
 	
-	public CarParking(CarParkingView view) {
+	public CarParking(MockCarSensor sens, MockCarActuator act, CarParkingView view) {
+		this.sens = sens;
+		this.act = act;
 		this.view = view;
-		act = new Actuators();
+		
 	}
 
 	/**
@@ -48,11 +51,13 @@ public class CarParking {
 	 */
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
-		//int sensor_val1 = sensor1;
-		//int sensor_val2 = sensor2;
-		int sensor_val1 = (int) (Math.random()*200);
-		int sensor_val2 = (int) (Math.random()*200);
-		//System.out.println(sensor_val1 + " " + sensor_val2);
+		
+		//int sensor_val1 = (int) (Math.random()*200);
+		//int sensor_val2 = (int) (Math.random()*200);
+		int [] sensval = sens.getValues(y); // Denna rad är tillagd
+		
+		// Add testcase when they are broken. 
+		int sensor_val1 = sensval[0]; int sensor_val2 = sensval[1]; // Denna raden är tillagd
 		if(sensor_val1 > 150 || sensor_val2 > 150 ){
 			return false;
 		}
@@ -92,7 +97,7 @@ public class CarParking {
 			freespace = 0;
 		}
 		int [] currentSituation = {parked, y, freespace};
-		this.view.map(currentSituation, slots);
+	//	this.view.map(currentSituation, slots);
 		return currentSituation;
 
 	}
@@ -113,10 +118,10 @@ public class CarParking {
 		if (parked != 0) { // Added this line to pass the testCatParkingUnParkWhenNotParked, precondition
 			parked = 0;
 			try {
-				MoveForward();
+				MoveForward(); 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			didUnpark = true;
 		}
@@ -151,7 +156,7 @@ public class CarParking {
 			parked = 1;//pre parallel implementation
 			freespace = 0;
 			int [] currentSituation = {parked, y, freespace};
-			this.view.map(currentSituation, slots);
+			//this.view.map(currentSituation, slots);
 			return true;
 		}
 		return false;
@@ -188,7 +193,7 @@ public class CarParking {
 			freespace = 0;
 		}
 		int [] currentSituation = {parked, y, freespace};
-		this.view.map(currentSituation, slots);
+		//this.view.map(currentSituation, slots);
 		return currentSituation;
 
 		}

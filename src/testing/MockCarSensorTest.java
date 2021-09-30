@@ -8,8 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-
-import productioncode.AddNumbers;
 import productioncode.MockCarSensor;
 
 class MockCarSensorTest {
@@ -28,7 +26,7 @@ class MockCarSensorTest {
 		when(sensorclass.getValues(y)).thenReturn(s);
 		
 		assertEquals("Mocking the MockCarSensorclass :", s, sensorclass.getValues(y));
-		verify(sensorclass).getValues(y);
+		verify(sensorclass).getValues(y); 
 		
 	}
 	

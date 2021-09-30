@@ -14,7 +14,7 @@ public class CarParkingController implements KeyListener{
 	public CarParkingController(CarParking carModel, CarParkingView view) {
 		this.carModel = carModel;
 		this.view = view;
-		view.addKeyListener(this);
+		view.addKeyListener(this); 
 
 	}
 

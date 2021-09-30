@@ -20,7 +20,6 @@ public class MockCarSensor implements Sensor{
 	}
 	/**
 	 * 
-	 * 
 	 * getValues will return the sensor values for a specified y_position. If sensor value is between 0-200 then it is considered to work fine. 
 	 * If the sensor value is -1, then the sensor is broken and can not be used. 
 	 * 

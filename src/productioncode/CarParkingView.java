@@ -18,19 +18,18 @@ public class CarParkingView extends JFrame {
 
 	public CarParkingView() {
 		this.setSize(200, 300);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
 		int[] init_position = new int[3];
 		int[] init_knowledge = new int[1];
 		this.map(init_position, init_knowledge);
 		this.pack();
-		this.setVisible(true);
+		this.setVisible(true); 
 	}
 	public void map(int[] currentsituation, int[] slots) {
 		this.getContentPane().removeAll();
 		Color color = new Color(0, 0, 0);
 		int y = currentsituation[1];
 		int parked = currentsituation[0];
-		//System.out.println(parked);
 		this.setSize(200, 300);
 		int rows = 0;
 		if (y > 24) {
