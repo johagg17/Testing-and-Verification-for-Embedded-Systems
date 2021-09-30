@@ -10,45 +10,14 @@ import interfaces.Sensor;
 
 public class MockCarSensor implements Sensor{
 	
+	private int sensor1;
+	private int sensor2;
 	
-	ArrayList<Integer> sensorvalues = new ArrayList<Integer>();
-	
-	public MockCarSensor() {
-		init();
+	public MockCarSensor(int sensor1, int sensor2) {
+		this.sensor1 = sensor1;
+		this.sensor2 = sensor2;
 		
 	}
-	
-	
-	/**
-	 * This method will initilize the MockCarSensor class by reading sensor values from a specific file. 
-	 * @param none
-	 * @precondition the path to the file exists. 
-	 * @postcondition ArrayList.size() > 0, sc.hasNextLine() = false
-	 * @return void
-	 * 
-	 * @Test: 
- 	 */
-	public void init() {
-		String path = "data\\Sensor_data";
-		File file = new File(path);
-		Scanner sc;
-		try {
-			sc = new Scanner(file);
-			while(sc.hasNextLine()) {
-				String [] sensors = sc.nextLine().split(" ");
-				int sensor1 = Integer.parseInt(sensors[0]);
-				int sensor2 = Integer.parseInt(sensors[1]);
-				sensorvalues.add(sensor1); 
-				sensorvalues.add(sensor2);
-			}
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
 	/**
 	 * 
 	 * 
@@ -66,9 +35,6 @@ public class MockCarSensor implements Sensor{
 	 */
 	
 	public int[] getValues(int y_position) {
-		int sensor1 = (int) sensorvalues.get(y_position);
-		int sensor2 = (int) sensorvalues.get(y_position + 1); 
-		
 		int [] sensors = {sensor1, sensor2};
 		return sensors;
 		
