@@ -3,6 +3,9 @@ package testing;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -109,6 +112,56 @@ public class CarParkingTesting {
 		
 		reset(sens, act);
 	}
+	@Test 
+	public void testCarParkingIsEmptySensor1brokenSensor2WorksFine() { // Test for IsEmpty
+		
+		// Init mocks
+		when(sens.getValues(0)).thenReturn(new int[] {-1, 150});
+		CarParking car = new CarParking(sens, act, view);
+		boolean empty = car.isEmpty();
+		
+		assertTrue(empty);
+		
+		reset(sens, act);
+		
+	}
+	@Test
+	public void testCarParkingIsEmptySensor1brokenSensor2GivesNonEmptySlot() { // Test for IsEmpty
+		
+		// Init mocks
+		when(sens.getValues(0)).thenReturn(new int[] {-1, 160});
+		CarParking car = new CarParking(sens, act, view);
+		boolean empty = car.isEmpty();
+				
+		assertFalse(empty);
+		reset(sens, act);
+		
+	}
+	@Test 
+	public void testCarParkingIsEmptySensor2brokenSensor1WorksFine () { // Test for IsEmpty
+		
+		// Init mocks
+		when(sens.getValues(0)).thenReturn(new int[] {100, -1});
+		CarParking car = new CarParking(sens, act, view);
+		boolean empty = car.isEmpty();
+				
+		assertTrue(empty);
+				
+		reset(sens, act);
+		
+	}
+	@Test
+	public void testCarParkingIsEmptySensor2brokenSensor1GivesNonEmptySlot() { // Test for IsEmpty
+		
+		// Init mocks
+		when(sens.getValues(0)).thenReturn(new int[] {160, -1});
+		CarParking car = new CarParking(sens, act, view);
+		boolean empty = car.isEmpty();
+				
+		assertFalse(empty);
+		reset(sens, act);
+		
+	}
 	
 	@Test
 	public void testCarParkingMoveForward() throws Exception { // test for MoveForward
@@ -172,9 +225,11 @@ public class CarParkingTesting {
 	}
 	@Test(expected = Exception.class)
 	public void testCarParkingMoveForwardOutOfBounds() throws Exception{ // test for MoveForward
-		CarParking car = new CarParking(sens, act, view);
-		for (int i=0; i<=500; i++) {car.MoveForward();}
-	}
+		
+		for(int i=1; i<=500; i++) when(sens.getValues(i)).thenReturn(new int[] {200, 200});
+		CarParking car = new CarParking(sens, act, view); 
+		for (int i=0; i<=500; i++) {car.MoveForward();} 
+	} 
 	
 	@Test
 	public void testCarParkingUnParkWhenNotParked() { // test for UnPark
@@ -203,7 +258,7 @@ public class CarParkingTesting {
 			}
 		}
 		
-		CarParking car = new CarParking(sens, act, view);
+		CarParking car = new CarParking(sens, act, view); 
 		boolean parked = car.Park();
 		int y = car.WhereIs()[1];
 		boolean unparked = car.UnPark();
@@ -244,7 +299,7 @@ public class CarParkingTesting {
 	public void testCarParkingParkWhenEmptySlotsAreAvailable() { // test for Park
 		// Init mocks
 		
-		when(sens.getValues(1)).thenReturn(new int[] {100, 100}); // Still not finished
+		when(sens.getValues(1)).thenReturn(new int[] {100, 100}); 
 		when(sens.getValues(2)).thenReturn(new int[] {100, 100});
 		when(sens.getValues(3)).thenReturn(new int[] {100, 100});
 		when(sens.getValues(4)).thenReturn(new int[] {100, 100});
@@ -252,18 +307,16 @@ public class CarParkingTesting {
 		
 		CarParking car = new CarParking(sens, act, view);
 		boolean parked = car.Park();
-		//System.out.println(parked);
 		assertTrue(parked);
 		
 		
-		reset(sens, act);
+		reset(sens, act); 
 		
 	} 
 	@Test
 	public void testCarParkingParkWhenEmptySlotsAreNotAvailable() { // test for Park
 		for(int i=1; i<=500; i++) when(sens.getValues(i)).thenReturn(new int[] {200, 200});
 		CarParking car = new CarParking(sens, act, view);
-		car.sensor1 = 200;
 		boolean parked = car.Park();
 		assertFalse(parked);
 		int [] status = car.WhereIs();
@@ -318,6 +371,26 @@ public class CarParkingTesting {
 		
 		
 		reset(sens, act);
+	}
+	
+	@Test
+	public void testCarParkinggetAvailableSlots() { // Test for getAvailableSlots
+		
+		CarParking car = new CarParking(sens, act, view); 
+		int [] slots = car.getAvailableSlots();
+		assertTrue(slots.length > 0);
+		
+	}
+	@Test
+	public void testCarParkinggetAvailableSlotsNull() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException { // Test for getAvailableSlots
+		CarParking car = new CarParking(sens, act, view);
+		Field privateStringField = CarParking.class.getDeclaredField("slots");
+		privateStringField.setAccessible(true);
+		
+		privateStringField.set(car, null);
+		
+		int [] a = car.getAvailableSlots();
+		assertNull(a);
 	}
 
 

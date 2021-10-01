@@ -7,10 +7,7 @@ public class CarParking {
 	int y = 0; // ranges from 0 to 500
 	int freespace = 0; // ranges from 0 to 5
 	int[] slots = new int[501]; // The size is 501 since we do not query index 0 at the start.
-	public int sensor1 = 80; // ranges from 0 to 200
-	public int sensor2 = 80; // ranges from 0 to 200
 	
-	//Sensor sensors;
 	MockCarSensor sens;
 	MockCarActuator act;
 	CarParkingView view;
@@ -46,19 +43,31 @@ public class CarParking {
 	 * 				2. (testname = testCarParkingIsEmpty2) Sensor1 tells false and sensor2 tells true, expected output is false.
 	 * 				3. (testname = testCarParkingIsEmpty3) Sensor1 tells true and sensor2 tells false, expected output is false.
 	 * 				4. (testname = testCarParkingIsEmpty4) Both sensor1 and sensor2 tells false, expected output is false.
-	 *
+	 *				5. (testname = testCarParkingIsEmptySensor1brokenSensor2WorksFine) Sensor1 is broken (-1) while sensor2 is fine and shows on empty slot.
+	 *				6. (testname = testCarParkingIsEmptySensor1brokenSensor2GivesNonEmptySlot) Sensor1 is broken (-1) while sensor2 is fine but shows on non-empty slot.
+	 *				7. (testname = testCarParkingIsEmptySensor2brokenSensor1WorksFine) Sensor2 is broken (-1) while sensor1 is fine and shows on empty slot.
+	 *				8. (testname = testCarParkingIsEmptySensor2brokenSensor1GivesNonEmptySlot) Sensor2 is broken (-1) while sensor1 is fine but shows on non-empty slot.
 	 * @return boolean
 	 */
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
+		int [] sensval = sens.getValues(y);
+
+		int sensorvalue = 0;
+		int sensor_val1 = sensval[0]; int sensor_val2 = sensval[1];
+		if ( sensor_val1 < 0 || sensor_val1 > 200) { // Check if sensor1 is broken
+			sensorvalue = sensor_val2;
+		}
+		else if (sensor_val2 < 0 || sensor_val2 > 200) { // Check if sensor2 is broken
+			sensorvalue = sensor_val1;
+		}
+		else { // If none of them are broken, use both to determine if we have an empty slot.
+			if (sensor_val1 > 150 || sensor_val2 > 150) return false;
+			return true;
+			
+		}
 		
-		//int sensor_val1 = (int) (Math.random()*200);
-		//int sensor_val2 = (int) (Math.random()*200);
-		int [] sensval = sens.getValues(y); // Denna rad �r tillagd
-		
-		// Add testcase when they are broken. 
-		int sensor_val1 = sensval[0]; int sensor_val2 = sensval[1]; // Denna raden �r tillagd
-		if(sensor_val1 > 150 || sensor_val2 > 150 ){
+		if(sensorvalue > 150){
 			return false;
 		}
 		else {
@@ -81,6 +90,7 @@ public class CarParking {
 	public int[] MoveForward() throws Exception {
 		// TODO Auto-generated method stub
 		if (y == 500 || parked == 1) { throw new Exception("Not able to move"); } // throw exception when this is true // Added this line to pass the test testCarParkingMoveForwardOutOfBounds.
+		act.MoveForward();
 		y += 1;
 		boolean noise = isEmpty();
 		if(noise) {
@@ -97,7 +107,7 @@ public class CarParking {
 			freespace = 0;
 		}
 		int [] currentSituation = {parked, y, freespace};
-	//	this.view.map(currentSituation, slots);
+		this.view.map(currentSituation, slots);
 		return currentSituation;
 
 	}
@@ -122,6 +132,7 @@ public class CarParking {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				//e.printStackTrace();
+				System.out.println("Can not unpark at the end of street");
 			}
 			didUnpark = true;
 		}
@@ -137,14 +148,14 @@ public class CarParking {
 	 * @postcondition parked=1,
 	 * @Test-cases 1. (testname = testCarParkingParkWhenAlreadyParked) Action: Test Park when already parked, expected output: Error
 	 * 			   2. (testname = testCarParkingParkWhenEmptySlotsAreAvailable) Action: When there are empty slots, park the car, expected output: true.
-	 * 			   3. (testname = ) Action: Try park when none of the slots are empty, expected output: false
+	 * 			   3. (testname = testCarParkingParkWhenEmptySlotsAreNotAvailable) Action: Try park when none of the slots are empty, expected output: false
 	 * @return boolean
 	 *
 	 */
 	public boolean Park() {
 		// TODO Auto-generated method stub
 		if(parked == 0) {
-			while(freespace < 5 && y<=500) {
+			while(freespace < 5 && y<=500) { 
 				try {
 					MoveForward();
 				} catch (Exception e) {
@@ -153,11 +164,13 @@ public class CarParking {
 					return false;
 				}
 			}
-			parked = 1;//pre parallel implementation
-			freespace = 0;
-			int [] currentSituation = {parked, y, freespace};
-			//this.view.map(currentSituation, slots);
-			return true;
+			if(freespace == 5) {
+				parked = 1;//pre parallel implementation
+				freespace = 0;
+				int [] currentSituation = {parked, y, freespace};
+				this.view.map(currentSituation, slots);
+				return true;
+			}
 		}
 		return false;
 
@@ -177,6 +190,7 @@ public class CarParking {
 	public int[] MoveBackward() throws Exception {
 		// TODO Auto-generated method stub
 		if (y == 0 || parked == 1) {throw new Exception("Not able to move");}
+		act.MoveBackward();
 		y -= 1;
 		boolean noise = isEmpty();
 		if(noise) {
@@ -193,22 +207,22 @@ public class CarParking {
 			freespace = 0;
 		}
 		int [] currentSituation = {parked, y, freespace};
-		//this.view.map(currentSituation, slots);
-		return currentSituation;
+		this.view.map(currentSituation, slots);
+		return currentSituation; 
 
 		}
+	
+	/**
+	 * This method is used to return the array slots such that we can fetch the available parking-slots for now.
+	 * 
+	 * @precondition int[]slots != null
+	 * @postcondition slots == previous_slots (this method should not modify the array, just return it).
+	 * @Test: 1. (testname = testCarParkingGetAvailableSlots) Action: Fetch the available slots for now, Expected output: size > 0
+	 * 
+	 * @return int []
+	 */
+	public int [] getAvailableSlots() {
+		
+		return slots;
+	}
 }
-/*
- * 1: om en sensor får ett värde utanför 0 till 200 skit i den helt
- * 2: när man backar vill vi inte skanna om sensorerna längre eftersom vi ska kunna komma ihåg
- * vilken plats som va den minsta men ändå parker bara efter vi kört hela vägen i part 3
- * samma för när vi gör moveforward men gjort backward innan vill bara skanna sensorer om
- * vi är på ett ställe vi aldrig varit på i suppose
- * 3: delar av view lösningen är kanske inte super snygg xD gjorde ba det jag kunde komma
- * tänka på
- * 4: lärde mig aldrig riktigt konstruktorer helt back in the days så vet inte om jag
- * implementerat dom rätt
- * 5: färger för park unpark i view
- * 6: spara alla olika parkeringar någonstans
- *
- * */

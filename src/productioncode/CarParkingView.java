@@ -14,8 +14,7 @@ import javax.swing.JPanel;
 
 public class CarParkingView extends JFrame {
 
-	private CarParkingController controller;
-
+	
 	public CarParkingView() {
 		this.setSize(200, 300);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -41,9 +40,9 @@ public class CarParkingView extends JFrame {
 		    for (int col = 0; col < 2; col++){
 		    	if(row <5 && col == parked) {
 		    		color = new Color(50, 50, 205);//car? blueihs
-		    	}
+		    	} 
 		    	else if (col == 0) {
-		    		color = new Color(220, 220, 220);//street? grayish
+		    		color = new Color(220, 220, 220);//street? grayish 
 		    	}
 		    	else if(slots[y-row] == 0){
 		    		color = new Color(205, 50, 50);//street? redish occupied
@@ -52,12 +51,11 @@ public class CarParkingView extends JFrame {
 		    	}
 		        JPanel panel = new JPanel();
 		        JLabel b = new JLabel ("(" + (y-row)+","+col+")");
-		        this.add(b).setLocation(row, col);
-		        panel.add(b);
+		        panel.add(b).setLocation(row, col);
 		        panel.setPreferredSize(new Dimension(10, 25));
 		        panel.setBackground(color);
 		        this.add(panel);
-		    }
+		    } 
 		}
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
